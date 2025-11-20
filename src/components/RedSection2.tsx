@@ -3,18 +3,19 @@ import React from "react";
 
 const RedSection2 = () => {
   return (
+    // once again rs2 stands for red section 2
     <div className="px-5  flex flex-col justify-end gap-2 pt-20  text-white  bg-linear-to-l from-orange-500-start to-orange-500-end sm:text-center relative">
-      <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold">
+      <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold rs2-item">
         Keep every one in the loop
       </h2>
-      <p className="sm:w-3/5 max-w-100 text-pretty sm:m-auto md:text-lg">
+      <p className="sm:w-3/5 max-w-100 text-pretty sm:m-auto text-sm md:text-base rs2-item">
         All good things starts with a homepage. Get inspired without breaking
         your wallet.
       </p>
-      <div className=" text-black bg-white p-2 px-5 rounded-full font-medium w-fit sm:m-auto  cursor-pointer my-5">
+      <div className=" text-black bg-white p-2 px-5 rounded-full font-medium w-fit sm:m-auto  cursor-pointer my-8 text-sm rs2-item">
         Start for free
       </div>
-      <div className=" max-w-280 m-auto items-stretch">
+      <div className=" max-w-280 m-auto items-stretch rs2-item2">
         <Image
           src="/assets/images/screen.svg"
           alt="Feature Image"

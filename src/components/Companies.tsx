@@ -13,9 +13,9 @@ const Companies = () => {
   ];
   return (
     <div className="w-full dark:bg-black flex justify-center">
-      <div className="flex flex-wrap justify-center items-center gap-10 my-10 px-5">
+      <div className="flex flex-wrap justify-center items-center gap-10 my-10 px-5 company-container">
         {companies.map((company) => (
-          <div key={company} className="flex items-center">
+          <div key={company} className="flex items-center company">
             <Image
               src={`/assets/images/${company}.svg`}
               alt={company}
