@@ -1,473 +1,265 @@
 "use client";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef } from "react";
-import { useGSAP } from "@gsap/react";
+import { useEffect } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SplitText } from "gsap/SplitText";
-import { useMediaQuery } from "react-responsive";
 
 gsap.registerPlugin(ScrollTrigger, SplitText);
 
 const Animations = () => {
-  //   const isDesktop = useMediaQuery({ minWidth: 992 });
-  //   const isTablet = useMediaQuery({ minWidth: 768, maxWidth: 991 });
-  //   const isMobile = useMediaQuery({ maxWidth: 767 });
-
   const pathname = usePathname();
+
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
     ).matches;
 
     if (prefersReducedMotion) return;
-    // --- HERO SECTION ---
-    const heroSplit = new SplitText(".hero-title", { type: "words,chars" });
-    // const paragraphSplit = new SplitText(".hero-subtitle", { type: "lines" });
 
-    // navbar
+    // Kill old animations when route changes
+    ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+    gsap.globalTimeline.clear();
+
+    // Refresh on layout shifts (important for mobile)
+    ScrollTrigger.refresh(true);
+
+    const heroTitle = document.querySelector(".hero-title");
+    const archiveTitle = document.querySelector(".archive-title");
+
+    let heroSplit: SplitText | null = null;
+    let archTitleSplit: SplitText | null = null;
+
+    if (heroTitle) {
+      heroSplit = new SplitText(heroTitle, { type: "words,chars" });
+    }
+
+    if (archiveTitle) {
+      archTitleSplit = new SplitText(archiveTitle, { type: "words,chars" });
+    }
+
+    // ---------------- NAVBAR ----------------
     gsap.from(".nav-item", {
-      xPercent: -50,
+      y: -30,
       opacity: 0,
-      stagger: 0.3,
-      ease: "expo.out",
-      duration: 2,
+      stagger: 0.15,
+      ease: "power3.out",
+      duration: 1,
     });
 
-    // hero
-    gsap.from(heroSplit.chars, {
-      xPercent: -100,
-      rotateX: -90,
+    // ---------------- HERO ----------------
+    if (heroSplit) {
+      gsap.from(heroSplit.chars, {
+        yPercent: 100,
+        opacity: 0,
+        stagger: 0.03,
+        duration: 0.6,
+        ease: "power3.out",
+        delay: 0.5,
+      });
+    }
+
+    gsap.from(".hero-subtitle, .hero-tiny-text", {
+      y: 30,
       opacity: 0,
-      stagger: 0.06,
-      ease: "expo.out",
+      stagger: 0.2,
+      ease: "power2.out",
       duration: 0.8,
       delay: 1,
     });
 
-    gsap.from(".hero-subtitle", {
-      xPercent: -50,
-      opacity: 0,
-      stagger: 0.5,
-      ease: "sine.out",
-      duration: 1,
-      delay: 2,
-    });
-
     gsap.from(".hero-cta", {
-      scale: 0,
+      scale: 0.8,
       opacity: 0,
-      stagger: 0.3,
-      ease: "elastic.out(1, 0.5)",
-      duration: 0.5,
-      delay: 3,
-    });
-
-    gsap.from(".hero-tiny-text", {
-      xPercent: -50,
-      opacity: 0,
-      stagger: 0.3,
-      ease: "expo.out",
-      duration: 0.5,
-      delay: 3.5,
-    });
-
-    gsap.from(".hero-icons", {
-      rotateY: -180,
-      opacity: 0,
-      stagger: 0.3,
-      ease: "sine.out",
-      duration: 2,
+      ease: "back.out(1.7)",
+      duration: 0.7,
       delay: 1.5,
     });
 
-    gsap.from(".hero-wings", {
-      scale: 0,
+    gsap.from(".hero-icons, .hero-wings", {
+      scale: 0.8,
       opacity: 0,
-      stagger: 0.3,
-      ease: "sine.out",
-      duration: 2,
-      delay: 0.5,
+      ease: "power3.out",
+      duration: 1,
+      delay: 1,
     });
 
-    // companies
-    gsap.from(".company", {
-      scrollTrigger: {
-        trigger: ".company-container",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
+    // Helper function (TS safe now)
+    const scrollAnim = (
+      selector: string,
+      props: gsap.TweenVars = {},
+      triggerSelector?: string
+    ) => {
+      gsap.from(selector, {
+        scrollTrigger: {
+          trigger: triggerSelector || selector,
+          start: "top 95%",
+          toggleActions: "play none none reverse",
+        },
+        ...props,
+      });
+    };
+
+    // ---------------- COMPANIES ----------------
+    scrollAnim(
+      ".company",
+      {
+        scale: 0.7,
+        opacity: 0,
+        stagger: 0.15,
+        duration: 0.8,
       },
-      scale: 0.5,
+      ".company-container"
+    );
+
+    // ---------------- FEATURES ----------------
+    scrollAnim(".feature-item", {
+      y: 50,
+      opacity: 0,
       stagger: 0.2,
+      duration: 0.8,
+    });
+
+    scrollAnim(".feature-img, .feature-img2", {
+      scale: 0.7,
       opacity: 0,
       duration: 0.8,
     });
 
-    // features
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".feature-item",
-        },
-        defaults: {
-          stagger: 0.2,
-          opacity: 0,
-          duration: 0.8,
-        },
-      })
-      .from(".feature-item", {
-        scrollTrigger: {
-          trigger: ".feature-item",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
-      .from(".feature-img", {
-        scrollTrigger: {
-          trigger: ".feature-img",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".feature-item2", {
-        scrollTrigger: {
-          trigger: ".feature-item2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
-      .from(".feature-img2", {
-        scrollTrigger: {
-          trigger: ".feature-img2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      });
-
-    // red section 1
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".rs1-item",
-        },
-        defaults: {
-          stagger: 0.2,
-          opacity: 0,
-          duration: 0.8,
-        },
-      })
-      .from(".rs1-item", {
-        scrollTrigger: {
-          trigger: ".rs1-item",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
-      .from(".rs1-img", {
-        scrollTrigger: {
-          trigger: ".rs1-img",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".rs1-img2", {
-        scrollTrigger: {
-          trigger: ".rs1-img2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".rs1-img3", {
-        scrollTrigger: {
-          trigger: ".rs1-img3",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".rs1-img4", {
-        scrollTrigger: {
-          trigger: ".rs1-img4",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      });
-
-    //   archive
-
-    const archTitleSplit = new SplitText(".archive-title", {
-      type: "words,chars",
+    // ---------------- RED SECTION 1 ----------------
+    scrollAnim(".rs1-item", {
+      y: 60,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 0.8,
     });
 
-    gsap.from(archTitleSplit.chars, {
-      scrollTrigger: {
-        trigger: ".archive-title",
-      },
-      yPercent: 100,
-      duration: 0.5,
-      stagger: 0.03,
+    scrollAnim(".rs1-img, .rs1-img2, .rs1-img3, .rs1-img4", {
+      scale: 0.7,
+      opacity: 0,
+      duration: 0.8,
     });
 
-    gsap
-      .timeline({
+    // ---------------- ARCHIVE ----------------
+    if (archTitleSplit) {
+      gsap.from(archTitleSplit.chars, {
         scrollTrigger: {
           trigger: ".archive-title",
+          start: "top 85%",
         },
-        defaults: {
-          stagger: 0.2,
-          opacity: 0,
-          duration: 0.8,
-        },
-      })
-      .from(".archive-item", {
-        scrollTrigger: {
-          trigger: ".archive-item",
-          start: "center bottom +=100",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
-      .from(".archive-item2", {
-        scrollTrigger: {
-          trigger: ".archive-item2",
-          start: "center bottom +=100",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
+        yPercent: 100,
+        stagger: 0.02,
+        duration: 0.5,
+        ease: "power2.out",
       });
+    }
 
-    //   testimonials
+    scrollAnim(".archive-item, .archive-item2", {
+      y: 50,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.8,
+    });
 
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".testimonial-item",
-        },
-        defaults: {
-          stagger: 0.2,
-          opacity: 0,
-          duration: 0.8,
-        },
-      })
-      .from(".testimonial-img", {
-        scrollTrigger: {
-          trigger: ".testimonial-img",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".testimonial-item", {
-        scrollTrigger: {
-          trigger: ".testimonial-item",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
+    // ---------------- TESTIMONIALS ----------------
+    scrollAnim(".testimonial-img, .testimonial-img2", {
+      scale: 0.7,
+      opacity: 0,
+      duration: 0.8,
+    });
 
-      .from(".testimonial-img2", {
-        scrollTrigger: {
-          trigger: ".testimonial-img2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      })
-      .from(".testimonial-item2", {
-        scrollTrigger: {
-          trigger: ".testimonial-item2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      });
-
-    //   loved by
-    gsap.from(".designer-text", {
-      scrollTrigger: {
-        trigger: ".designer-text",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
-      },
-      yPercent: 50,
+    scrollAnim(".testimonial-item, .testimonial-item2", {
+      y: 50,
+      opacity: 0,
       stagger: 0.2,
-      opacity: 0,
       duration: 0.8,
     });
 
-    gsap.from(".designer-item", {
-      scrollTrigger: {
-        trigger: ".designer-item",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
-      },
-      scale: 0.5,
+    // ---------------- LOVED BY ----------------
+    scrollAnim(".designer-text", {
+      y: 40,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.7,
+    });
+
+    scrollAnim(".designer-item", {
+      scale: 0.6,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.7,
+    });
+
+    // ---------------- RED SECTION 2 ----------------
+    scrollAnim(".rs2-item", {
+      y: 50,
+      opacity: 0,
       stagger: 0.2,
+      duration: 0.8,
+    });
+
+    scrollAnim(".rs2-item2", {
+      scale: 0.7,
       opacity: 0,
       duration: 0.8,
     });
 
-    // red-section-2
-
-    gsap
-      .timeline({
-        scrollTrigger: {
-          trigger: ".rs2-item",
-        },
-        defaults: {
-          stagger: 0.2,
-          opacity: 0,
-          duration: 0.8,
-        },
-      })
-      .from(".rs2-item", {
-        scrollTrigger: {
-          trigger: ".rs2-item",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        yPercent: 50,
-      })
-
-      .from(".rs2-item2", {
-        scrollTrigger: {
-          trigger: ".rs2-item2",
-          start: "center bottom +=200",
-          end: "+=500",
-          scrub: 1,
-          once: true,
-        },
-        scale: 0.5,
-      });
-
-    //   last section
-    gsap.from(".last-img", {
-      scrollTrigger: {
-        trigger: ".last-img",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
-      },
-      scale: 0.5,
-      opacity: 0,
-      duration: 0.8,
-    });
-    gsap.from(".last-text", {
-      scrollTrigger: {
-        trigger: ".last-text",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
-      },
-      yPercent: 50,
-      stagger: 0.2,
-      opacity: 0,
-      duration: 0.8,
-    });
-    gsap.from(".last-cta", {
-      scrollTrigger: {
-        trigger: ".last-cta",
-        start: "center bottom +=200",
-        end: "+=500",
-        scrub: 1,
-        once: true,
-      },
-      xPercent: -50,
-      stagger: 0.2,
+    // ---------------- LAST SECTION ----------------
+    scrollAnim(".last-img", {
+      scale: 0.7,
       opacity: 0,
       duration: 0.8,
     });
 
-    // footer
-    gsap.from(".footer-img", {
-      scrollTrigger: {
-        trigger: ".footer-img",
-        start: "top bottom +=200",
-        end: "+=300",
-        scrub: 1,
-        once: true,
-      },
-      scale: 0.5,
+    scrollAnim(".last-text", {
+      y: 50,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.8,
+    });
+
+    scrollAnim(".last-cta", {
+      x: -50,
+      opacity: 0,
+      stagger: 0.15,
+      duration: 0.8,
+    });
+
+    // ---------------- FOOTER ----------------
+    scrollAnim(".footer-img", {
+      scale: 0.7,
       opacity: 0,
       duration: 0.8,
     });
 
-    gsap.from(".footer-item", {
-      scrollTrigger: ".footer-item",
-      yPercent: 50,
+    scrollAnim(".footer-item", {
+      y: 40,
       opacity: 0,
-      stagger: 0.3,
-      ease: "expo.out",
-      duration: 2,
+      stagger: 0.15,
+      duration: 0.8,
     });
 
-    // not-found
+    // ---------------- NOT FOUND ----------------
     gsap.from(".not-found-img", {
-      scale: 0.5,
+      scale: 0.7,
       opacity: 0,
       duration: 0.8,
     });
 
-    gsap.from(".not-found-text", {
-      scrollTrigger: ".not-found-text",
-      yPercent: 50,
+    scrollAnim(".not-found-text", {
+      y: 50,
       opacity: 0,
-      stagger: 0.3,
-      ease: "expo.out",
-      duration: 2,
+      stagger: 0.15,
+      duration: 0.8,
     });
+
+    return () => {
+      ScrollTrigger.getAll().forEach((trigger) => trigger.kill());
+      if (heroSplit) heroSplit.revert();
+      if (archTitleSplit) archTitleSplit.revert();
+    };
   }, [pathname]);
+
   return null;
 };
 

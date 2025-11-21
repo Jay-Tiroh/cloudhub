@@ -200,3 +200,11 @@
 .footer-link {
   @apply text-secondary-200 dark:text-grey-400 cursor-pointer hover:dark:text-grey-300 transition-colors duration-150 ease-in-out hover:text-grey-700;
 }
+
+.drop-link {
+  @apply text-secondary-200 dark:text-grey-400 cursor-pointer hover:dark:text-grey-300 transition duration-150 ease-in-out hover:text-grey-700 hover:bg-white/10 font-medium hover:scale-105 flex justify-center p-2 w-full;
+}
+
+.drop-menu {
+  scrollbar-width: none !important;
+}

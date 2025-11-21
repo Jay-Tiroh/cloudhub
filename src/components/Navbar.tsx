@@ -53,7 +53,7 @@ const Navbar = () => {
         </div>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="md:hidden nav-item">
+          <DropdownMenuTrigger className="md:hidden nav-item outline-0">
             <Image
               src={"/assets/images/hamburger.svg"}
               width={120}
@@ -62,35 +62,33 @@ const Navbar = () => {
               className="w-6 dark:invert md:hidden hover:stroke-orange-500-end outline-0!"
             />
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-64">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="">
-              <span className="nav-link flex items-end gap-1 hover:text-orange-500-end transition-colors duration  cursor-pointer">
-                Product <ChevronDown className="size-3" />
-              </span>
+          <DropdownMenuContent className="w-64 mr-5 mt-2 py-0 drop-menu">
+            <DropdownMenuItem className="drop-link">
+              <Link href={"/product"} className="nav-link ">
+                Product
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="drop-link">
               <Link href={"/"} className="nav-link">
                 Home
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="drop-link">
               <Link href={"/shop"} className="nav-link">
                 Shop
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="drop-link">
               <Link href={"/pages"} className="nav-link">
                 Pages
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="drop-link">
               <Link href={"/integrations"} className="nav-link">
                 Integrations
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
+            <DropdownMenuItem className="drop-link">
               <Link href={"/developers"} className="nav-link">
                 Developers
               </Link>
